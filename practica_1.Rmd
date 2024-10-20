@@ -1,0 +1,282 @@
+---
+title: "Practica 1"
+author: "Gonzalo Cruz Gómez, Lucía Arnaldo Cuevas"
+date: "2024-10-20"
+output: pdf_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+#Introducción
+
+Práctica 1 de la asignatura de Inferencia Estadística. Se trabajará con
+los datos de los arrestos en EEUU de la librería 'datasets'
+
+#Pregunta 1
+
+EDA
+
+Cargo los datos de la librería datasets y las librerías que vamos a usar
+en la práctica
+
+```{r}
+library(datasets)
+library(dplyr)
+library(ggplot2)
+datos=datasets::USArrests
+```
+
+Estos datos representan los arrestos por cada 100000 habitantes en cada
+estado de EEUU en 1973, además del porcentaje de la población que vive
+en las ciudades
+
+```{r}
+dim(datos)
+```
+
+```{r}
+str(datos)
+```
+
+Estas variables representan:
+
+-   Murder: numeric Murder arrests (per 100,000)
+
+-   Assault: numeric Assault arrests (per 100,000)
+
+-   UrbanPop: numeric Percent urban population
+
+-   Rape: numeric Rape arrests (per 100,000)
+
+Todas las variables son variables continuas, pueden tomar cualquier
+valor, no tenemos variables discretas, para ello habría que discretizar
+una variable continua. Hay 50 observaciones y 4 características medidas.
+No tenemos variables de tipo texto ni variables irrelevantes
+
+#Pregunta 2
+
+Estadísticos resumen de todas las variables (cuartiles, mediana, media,
+mínimos y máximos), además de las desviaciones típicas de cada variable:
+
+```{r}
+summary(datos)
+print("desviaciones típicas de cada variable: \n")
+sd(datos$Murder)
+sd(datos$Assault)
+sd(datos$Rape)
+sd(datos$UrbanPop)
+
+```
+
+#Pregunta 3
+
+Como no tenemos variables discretas, hemos optado por discretizar la
+variable UrbanPop
+
+```{r}
+
+discretizada <- ifelse(USArrests$UrbanPop > 50, "Más urbana", "Más rural")
+
+# Crear un gráfico de barras para visualizar la discretización
+ggplot(USArrests, aes(x = discretizada)) +
+  geom_bar(fill = "lightblue") +
+  labs(title = "Distribución de la Población",
+       x = "Población",
+       y = "Numero de estados") +
+  theme_minimal() + 
+
+```
+Esta gráfica de la distribucion de la poblacion demuestra que claramente hay más estados en los que predomina la población urbana que estados en los que predomina la población rural
+
+#Pregunta 4
+
+Distribución de los asesinatos, de los asaltos y de las violaciones, que
+son nuestras variables continuas
+
+```{r}
+library(ggplot2)
+
+ggplot(datos, aes(x = Assault)) + 
+  geom_histogram(aes(y = ..density..),
+                 colour = 1, fill = "lightblue", bins=20) +
+  geom_density(lwd = 1, colour = "red",
+               fill = "red", alpha = 0.2) + theme_minimal()
+
+ggplot(datos, aes(x = Murder)) + 
+  geom_histogram(aes(y = ..density..),
+                 colour = 1, fill = "lightblue", bins=20) +
+  geom_density(lwd = 1, colour = "red",
+               fill = "red", alpha = 0.2) + theme_minimal()
+
+ggplot(datos, aes(x = Rape)) + 
+  geom_histogram(aes(y = ..density..),
+                 colour = 1, fill = "lightblue", bins=20) +
+  geom_density(lwd = 1, colour = "red",
+               fill = "red", alpha = 0.2) + theme_minimal()
+```
+
+La variable Assaults se aproxima relativamente bastante a una
+distribución uniforme, de ello podemos extraer que la cantidad de
+asaltos es más o menos igual en todo el territorio. En cuanto a las
+violaciones y los asesinatos, ambas variables se aproximan a una
+distribución normal aunque con una media poco centrada, por lo cual
+podemos concluir que es más común que haya un numero menor de
+violaciones y asesinatos que una gran cantidad de ellos
+
+#Pregunta 5
+
+Vamos a hacerlo para una distribución normal para luego compararlo con
+la distribución de las violaciones
+
+Se trata de una distribución normal con parámetros
+$\mathcal{N}(\mu, \sigma^2)$ para una muestra de $n$ datos
+$x_1, x_2, \ldots, x_n$ con una función de densidad de probabilidad: $$
+f(x_i | \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left( -\frac{(x_i - \mu)^2}{2\sigma^2} \right)
+$$ Su función de verosimilitud es: $$
+L(\mu, \sigma^2 | x) = \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left( -\frac{(x_i - \mu)^2}{2\sigma^2} \right)
+$$ Ahora hacemos la log-verosimilitud, para ello tomamos logaritmos $$
+\ell(\mu, \sigma^2 | x) = \log L(\mu, \sigma^2 | x_1, x_2, \ldots, x_n)
+$$ $$
+\ell(\mu, \sigma^2 | x) = -\frac{n}{2} \log(2\pi) - \frac{n}{2} \log(\sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^{n} (x_i - \mu)^2
+$$ Para hallar el estimador ML de $\mu$ , derivamos con respecto a $\mu$
+e igualamos a 0 $$
+\frac{\partial \ell}{\partial \mu} = -\frac{1}{\sigma^2} \sum_{i=1}^{n} (x_i - \mu)
+$$ $$
+- \frac{1}{\sigma^2} \sum_{i=1}^{n} (x_i - \mu) = 0
+$$ $$
+\sum_{i=1}^{n} (x_i - \mu) = 0
+$$ $$
+\sum_{i=1}^{n} x_i - n\mu = 0
+$$ $$
+\hat{\mu} = \frac{1}{n} \sum_{i=1}^{n} x_i
+$$ Hacemos lo mismo para $\sigma^2$ partiendo de la log-verosimilitud$$
+\frac{\partial \ell}{\partial \sigma^2} = -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum_{i=1}^{n} (x_i - \mu)^2
+$$ $$
+-\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum_{i=1}^{n} (x_i - \mu)^2 = 0
+$$ $$
+\hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \mu)^2
+$$
+
+Por lo que podemos concluir que los estimadores ML para $\mu$ y
+$\sigma^2$ son la media muestral y la varianza muestral
+
+```{r}
+mean_value <- 21.23     
+sd_value <- 9.366385    
+x <- seq(0, 60, length.out = 1000)
+y <- dnorm(x, mean = mean_value, sd = sd_value)
+# Crear un dataframe para ggplot
+normal <- data.frame(x = x, y = y)
+
+ggplot(USArrests, aes(x = Rape)) + 
+  geom_density(lwd = 1, colour = "red", fill = "red", alpha = 0.2) + 
+  geom_line(data = normal, aes(x = x, y = y), colour = "blue", lwd = 1) + 
+  theme_minimal() +
+  labs(title = "Distribución de las violaciones frente a su distribución teórica",
+       x = "Violaciones",
+       y = "Densidad")
+
+```
+
+#Pregunta 6
+
+Utilizando el método de los momentos: $$
+    m_1 = \frac{1}{n} \sum_{i=1}^{n} X_i
+    $$ $$
+    m_2 = \frac{1}{n} \sum_{i=1}^{n} X_i^2
+    $$
+
+Tenemos que igualar los momentos muestrales con los momentos teóricos:
+$$
+\mu_1 = E(X) = \mu
+$$ $$
+\mu_2 = E(X^2) = \text{Var}(X) + E(X)^2 = \mu^2 + \sigma^2
+$$ $$
+m_1 = \bar{X} = \mu
+$$
+
+$$
+m_2 = \frac{1}{n} \sum_{i=1}^{n} X_i^2 = \mu_2 = \mu^2 + \sigma^2
+$$ Resolvemos el sistema $$
+    \hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^{n} X_i^2 - \bar{X}^2 = \frac{1}{n} \sum_{i=1}^{n} (X_i - \bar{X})^2
+    $$ $$
+    \hat{\mu} = \bar{X}
+    $$ Y como resultado tenemos los estimadores de los parámetros Los
+valores de estos estimadores son:
+
+```{r}
+print(paste("media =", mean(USArrests$Rape)))
+print(paste("desviación típica = " , sd(datos$Rape)))
+```
+
+!!!!falta calcular el intervalo de confianza!!!!
+
+#Pregunta 7
+
+##Apartado a
+
+Vamos a calcular la probabilidad de que haya más de 10 asesinatos,
+sabiendo que la media es 7,78 y la desviación típica es 4.355 (pregunta
+2)
+
+$$
+\text{Murder} \sim N(\mu, \sigma^2)
+$$ $$
+Z = \frac{X - \mu}{\sigma}
+$$ $$
+P(\text{Murder} > x) = P\left( Z > \frac{x - \mu}{\sigma} \right)
+$$ $$
+z = \frac{10 - 7.788}{4.355} \approx 0.507
+$$ $$
+P(Z > 0.507) = 1 - 0.6943 = 0.3057
+$$ Por lo tanto la probabilidad de que en un estado haya mas de 10
+asesinatos por cada 100000 habitantes es de aproximadamente un 30%
+
+##Apartado b
+
+Si ahora en vez de calcular el valor de manera teórica, lo hacemos
+mediante una simulación en r:
+
+```{r}
+x <- 10
+n <- 10000
+simulacion <- rnorm(n, mean = mean(USArrests$Murder), sd = sd(USArrests$Murder))
+prob <- mean(simulacion > x)
+print(paste("Probabilidad de que haya más de 10 asesinatos = ", prob))
+```
+#Pregunta 8
+
+```{r}
+
+# Discretizar la variable UrbanPop
+USArrests$UrbanPop_cat <- ifelse(USArrests$UrbanPop > 50, "Más Población Urbana", "Más Población Rural")
+
+# Crear el gráfico de densidad para comparar la variable Murder
+ggplot(USArrests, aes(x = Murder, fill = UrbanPop_cat)) +
+  geom_density(alpha = 0.5, show.legend = TRUE) +
+  labs(title = "Distribución de Asesinatos en Función de la Población Urbana/Rural",
+       x = "Número de Asesinatos",
+       y = "Densidad") +
+  scale_fill_manual(values = c("Más Población Urbana" = "steelblue", "Más Población Rural" = "tomato")) +
+  theme_minimal()
+```
+Con esto podemos observar que la distribución de los asesinatos en los estados con mas población rural se aproxima mucho a una distribución uniforme, mientras que en los estados con población más urbana se acerca más a una normal.
+```{r}
+# Discretizar la variable UrbanPop
+USArrests$UrbanPop_cat <- ifelse(USArrests$UrbanPop > 50, "Estados Urbanos", "Estados rurales")
+
+# Crear el histograma para comparar la variable Murder
+ggplot(USArrests, aes(x = Murder, fill = UrbanPop_cat)) +
+  geom_histogram(position = "identity", alpha = 0.5, bins = 20, show.legend = TRUE) + 
+  labs(title = "Histograma de Asesinatos según Población Urbana/Rural",
+       x = "Número de Asesinatos",
+       y = "Frecuencia") +
+  scale_fill_manual(values = c("Estados Urbanos" = "lightblue", "Estados rurales" = "tomato")) +
+  theme_minimal()
+
+```
+Con este gráfico vemos que, claramente hay más asesinatos en los estados urbanos, con una distribución más cercana a la normal, que en los estados rurales, donde además estos asesinatos se distribuyen de manera uniforme
+
+#Pregunta 9
+Teniendo en cuenta los resultados anteriores, podemos plantear el siguiente contraste de hipótesis: Hay el mismo número de asesinatos independientemente de si más población vive en las ciudades o en los pueblos
