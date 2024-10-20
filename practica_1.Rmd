@@ -261,7 +261,7 @@ ggplot(USArrests, aes(x = Murder, fill = UrbanPop_cat)) +
   labs(title = "Distribución de Asesinatos en Función de la Población Urbana/Rural",
        x = "Número de Asesinatos",
        y = "Densidad") +
-  scale_fill_manual(values = c("Más Población Urbana" = "steelblue", "Más Población Rural" = "tomato")) +
+  scale_fill_manual(values = c("Más Población Urbana" = "lightblue", "Más Población Rural" = "tomato")) +
   theme_minimal()
 ```
 Con esto podemos observar que la distribución de los asesinatos en los estados con mas población rural se aproxima mucho a una distribución uniforme, mientras que en los estados con población más urbana se acerca más a una normal.
