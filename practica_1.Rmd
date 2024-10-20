@@ -2,9 +2,12 @@
 title: "Practica 1"
 author: "Gonzalo Cruz Gómez, Lucía Arnaldo Cuevas"
 date: "2024-10-20"
-output: pdf_document
-editor_options: 
-  markdown: 
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+editor_options:
+  markdown:
     wrap: 72
 ---
 
@@ -84,7 +87,7 @@ ggplot(USArrests, aes(x = discretizada)) +
   labs(title = "Distribución de la Población",
        x = "Población",
        y = "Numero de estados") +
-  theme_minimal() + 
+  theme_minimal() 
 
 ```
 Esta gráfica de la distribucion de la poblacion demuestra que claramente hay más estados en los que predomina la población urbana que estados en los que predomina la población rural
@@ -263,20 +266,26 @@ ggplot(USArrests, aes(x = Murder, fill = UrbanPop_cat)) +
 ```
 Con esto podemos observar que la distribución de los asesinatos en los estados con mas población rural se aproxima mucho a una distribución uniforme, mientras que en los estados con población más urbana se acerca más a una normal.
 ```{r}
-# Discretizar la variable UrbanPop
-USArrests$UrbanPop_cat <- ifelse(USArrests$UrbanPop > 50, "Estados Urbanos", "Estados rurales")
 
-# Crear el histograma para comparar la variable Murder
-ggplot(USArrests, aes(x = Murder, fill = UrbanPop_cat)) +
-  geom_histogram(position = "identity", alpha = 0.5, bins = 20, show.legend = TRUE) + 
-  labs(title = "Histograma de Asesinatos según Población Urbana/Rural",
-       x = "Número de Asesinatos",
-       y = "Frecuencia") +
-  scale_fill_manual(values = c("Estados Urbanos" = "lightblue", "Estados rurales" = "tomato")) +
+# Discretizar la variable UrbanPop
+USArrests$UrbanPop_cat <- ifelse(USArrests$UrbanPop > 50, "Más Población Urbana", "Más Población Rural")
+
+# Calcular la media de asesinatos por categoría
+murder_summary <- USArrests %>%
+  group_by(UrbanPop_cat) %>%
+  summarize(Media_Asesinatos = mean(Murder))
+
+# Crear el gráfico de barras
+ggplot(murder_summary, aes(x = UrbanPop_cat, y = Media_Asesinatos, fill = UrbanPop_cat)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +  
+  labs(title = "Media de Asesinatos según Población Urbana/Rural",
+       x = "Categoría de Población",
+       y = "Media de Asesinatos") +
+  scale_fill_manual(values = c("Más Población Urbana" = "lightblue", "Más Población Rural" = "tomato")) +
   theme_minimal()
 
 ```
-Con este gráfico vemos que, claramente hay más asesinatos en los estados urbanos, con una distribución más cercana a la normal, que en los estados rurales, donde además estos asesinatos se distribuyen de manera uniforme
+Aunque la distribución de los asesinatos pueda indicar lo contrario, la media de asesinatos en poblacion rural es ligeramente superior a la urbana. La anterior gráfica puede llevar a equivocación debido a que hay muchos más estados con más población urbana que rural, por lo cual más asesinatos se cometen en estados urbanos, a pesar de que de media se cometan más en los estados rurales
 
 #Pregunta 9
 Teniendo en cuenta los resultados anteriores, podemos plantear el siguiente contraste de hipótesis: Hay el mismo número de asesinatos independientemente de si más población vive en las ciudades o en los pueblos
