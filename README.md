@@ -18,7 +18,7 @@ menos) a estas preguntas:
   d. ¿Es posible identificar variables irrelevantes?
 2. (1 punto) Calcular estadísticos resumen (media, desviación típica, frecuencia,etc) de
 todas las variables de interés.
-##3. (1 punto) Emplear técnicas gráficas para estudiar la distribución de (al menos) una
+3. (1 punto) Emplear técnicas gráficas para estudiar la distribución de (al menos) una
 variable discreta. Si no existe una variable discreta en el conjunto de datos, podéis
 crearla.
 4. (1 punto) Emplear técnicas gráficas para estudiar la distribución de (al menos) una
