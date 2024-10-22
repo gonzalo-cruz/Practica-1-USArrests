@@ -1,3 +1,5 @@
+Práctica de la asignatura Inferencia Estadística en la cual se pide resolver las siguientes preguntas usando R y Rstudio
+
 Con la database USArrests de la librería dataset se pide lo siguiente:
 1. (1 punto) Realizar un Análisis Exploratorio de Datos sobre los datos. Responder (al
 menos) a estas preguntas:
@@ -16,16 +18,16 @@ menos) a estas preguntas:
   d. ¿Es posible identificar variables irrelevantes?
 2. (1 punto) Calcular estadísticos resumen (media, desviación típica, frecuencia,etc) de
 todas las variables de interés.
-3. (1 punto) Emplear técnicas gráficas para estudiar la distribución de (al menos) una
+##3. (1 punto) Emplear técnicas gráficas para estudiar la distribución de (al menos) una
 variable discreta. Si no existe una variable discreta en el conjunto de datos, podéis
 crearla.
 4. (1 punto) Emplear técnicas gráficas para estudiar la distribución de (al menos) una
 variable continua. Si es necesario, transformar la variable para conseguir una
 distribución conocida.
-5. (1 punto) Deriva teóricamente el estimador de máxima verosimilitud de (al menos)
+##5. (1 punto) Deriva teóricamente el estimador de máxima verosimilitud de (al menos)
 uno de los parámetros de la distribución anterior. Compara la distribución muestral
 con la distribución teórica. (1 punto)
-6. (1 punto) Repite el ejercicio anterior empleando el método de los momentos. Calcula
+##6. (1 punto) Repite el ejercicio anterior empleando el método de los momentos. Calcula
 el valor del estimador en la muestra de datos y su intervalo de confianza.
 7. (2 puntos) Para una variable continua, calcular la probabilidad que el verdadero valor
 de la variable sea superior a un valor fijo.
