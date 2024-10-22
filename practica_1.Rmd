@@ -287,5 +287,20 @@ ggplot(murder_summary, aes(x = UrbanPop_cat, y = Media_Asesinatos, fill = UrbanP
 ```
 Aunque la distribución de los asesinatos pueda indicar lo contrario, la media de asesinatos en poblacion rural es ligeramente superior a la urbana. La anterior gráfica puede llevar a equivocación debido a que hay muchos más estados con más población urbana que rural, por lo cual más asesinatos se cometen en estados urbanos, a pesar de que de media se cometan más en los estados rurales
 
+USArrests$UrbanPop_cat <- ifelse(USArrests$UrbanPop > 50, "Más Población Urbana", "Más Población Rural")
+
+```{r}
+# Crear el boxplot para comparar la variable Murder según las dos categorías de UrbanPop
+ggplot(USArrests, aes(x = UrbanPop_cat, y = Murder, fill = UrbanPop_cat)) +
+  geom_boxplot(show.legend = FALSE) +  # Eliminar la leyenda
+  labs(title = "Distribución de Asesinatos según Población Urbana/Rural",
+       x = "Categoría de Población",
+       y = "Número de Asesinatos") +
+  scale_fill_manual(values = c("Más Población Urbana" = "lightblue", "Más Población Rural" = "tomato")) +
+  theme_minimal()
+```
+Con este box plot confirmamos que la media de las zonas rurales es mayor que en las urbanas y que los datos están más dispersos en la población rural.
+
 #Pregunta 9
 Teniendo en cuenta los resultados anteriores, podemos plantear el siguiente contraste de hipótesis: Hay el mismo número de asesinatos independientemente de si más población vive en las ciudades o en los pueblos
+
