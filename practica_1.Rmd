@@ -21,11 +21,16 @@ EDA
 Cargo los datos de la librería datasets y las librerías que vamos a usar
 en la práctica
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
 ```{r}
 library(datasets)
 library(dplyr)
 library(ggplot2)
 datos=datasets::USArrests
+
 ```
 
 Estos datos representan los arrestos por cada 100000 habitantes en cada
