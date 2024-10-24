@@ -4,19 +4,17 @@ author: "Gonzalo Cruz Gómez, Lucía Arnaldo Cuevas"
 date: "2024-10-20"
 output:
   pdf_document: default
-  html_document:
-    df_print: paged
 editor_options:
   markdown:
     wrap: 72
 ---
 
-#Introducción
+# Introducción
 
 Práctica 1 de la asignatura de Inferencia Estadística. Se trabajará con
 los datos de los arrestos en EEUU de la librería 'datasets'
 
-#Pregunta 1
+# Pregunta 1
 
 EDA
 
@@ -57,7 +55,7 @@ valor, no tenemos variables discretas, para ello habría que discretizar
 una variable continua. Hay 50 observaciones y 4 características medidas.
 No tenemos variables de tipo texto ni variables irrelevantes
 
-#Pregunta 2
+# Pregunta 2
 
 Estadísticos resumen de todas las variables (cuartiles, mediana, media,
 mínimos y máximos), además de las desviaciones típicas de cada variable:
@@ -72,7 +70,7 @@ sd(datos$UrbanPop)
 
 ```
 
-#Pregunta 3
+# Pregunta 3
 
 Como no tenemos variables discretas, hemos optado por discretizar la
 variable UrbanPop
@@ -90,9 +88,12 @@ ggplot(USArrests, aes(x = discretizada)) +
   theme_minimal() 
 
 ```
-Esta gráfica de la distribucion de la poblacion demuestra que claramente hay más estados en los que predomina la población urbana que estados en los que predomina la población rural
 
-#Pregunta 4
+Esta gráfica de la distribucion de la poblacion demuestra que claramente
+hay más estados en los que predomina la población urbana que estados en
+los que predomina la población rural
+
+# Pregunta 4
 
 Distribución de los asesinatos, de los asaltos y de las violaciones, que
 son nuestras variables continuas
@@ -127,7 +128,7 @@ distribución normal aunque con una media poco centrada, por lo cual
 podemos concluir que es más común que haya un numero menor de
 violaciones y asesinatos que una gran cantidad de ellos
 
-#Pregunta 5
+# Pregunta 5
 
 Vamos a hacerlo para una distribución normal para luego compararlo con
 la distribución de las violaciones
@@ -182,7 +183,7 @@ ggplot(USArrests, aes(x = Rape)) +
 
 ```
 
-#Pregunta 6
+# Pregunta 6
 
 Utilizando el método de los momentos: $$
     m_1 = \frac{1}{n} \sum_{i=1}^{n} X_i
@@ -213,11 +214,33 @@ print(paste("media =", mean(USArrests$Rape)))
 print(paste("desviación típica = " , sd(datos$Rape)))
 ```
 
-!!!!falta calcular el intervalo de confianza!!!!
+Ahora calculamos el intervalo de confianza al 95% para una distribucion
+normal con la media y desviación típica anteriores $$
+IC = (\mu - Z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}, \mu + Z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}
+$$
 
-#Pregunta 7
+Donde el valor crítico para un nivel de confianza del 95% es 1.96$$
+IC = 21.232 \pm 1.96 \cdot \frac{9.36638453105965}{\sqrt{50}}
+$$ Calculandolo con r:
 
-##Apartado a
+```{r}
+media <- 21.232
+sd <- 9.36638453105965
+n <- 50
+valor_critico <- 1.96  
+
+error_std <- valor_critico * (sd / sqrt(n))
+
+IC_inferior <- media - error_std
+IC_superior <- media + error_std
+
+# Mostrar el resultado
+print(paste("IC_95% = (",IC_inferior,", ", IC_superior,")"))
+```
+
+# Pregunta 7
+
+### Apartado a)
 
 Vamos a calcular la probabilidad de que haya más de 10 asesinatos,
 sabiendo que la media es 7,78 y la desviación típica es 4.355 (pregunta
@@ -236,7 +259,7 @@ P(Z > 0.507) = 1 - 0.6943 = 0.3057
 $$ Por lo tanto la probabilidad de que en un estado haya mas de 10
 asesinatos por cada 100000 habitantes es de aproximadamente un 30%
 
-##Apartado b
+### Apartado b
 
 Si ahora en vez de calcular el valor de manera teórica, lo hacemos
 mediante una simulación en r:
@@ -248,15 +271,15 @@ simulacion <- rnorm(n, mean = mean(USArrests$Murder), sd = sd(USArrests$Murder))
 prob <- mean(simulacion > x)
 print(paste("Probabilidad de que haya más de 10 asesinatos = ", prob))
 ```
-#Pregunta 8
+
+# Pregunta 8
 
 ```{r}
 
 # Discretizar la variable UrbanPop
-USArrests$UrbanPop_cat <- ifelse(USArrests$UrbanPop > 50, "Más Población Urbana", "Más Población Rural")
+USArrests$UrbanPop_discreta <- ifelse(USArrests$UrbanPop > 50, "Más Población Urbana", "Más Población Rural")
 
-# Crear el gráfico de densidad para comparar la variable Murder
-ggplot(USArrests, aes(x = Murder, fill = UrbanPop_cat)) +
+ggplot(USArrests, aes(x = Murder, fill = UrbanPop_discreta)) +
   geom_density(alpha = 0.5, show.legend = TRUE) +
   labs(title = "Distribución de Asesinatos en Función de la Población Urbana/Rural",
        x = "Número de Asesinatos",
@@ -264,19 +287,39 @@ ggplot(USArrests, aes(x = Murder, fill = UrbanPop_cat)) +
   scale_fill_manual(values = c("Más Población Urbana" = "lightblue", "Más Población Rural" = "tomato")) +
   theme_minimal()
 ```
-Con esto podemos observar que la distribución de los asesinatos en los estados con mas población rural se aproxima mucho a una distribución uniforme, mientras que en los estados con población más urbana se acerca más a una normal.
+
+Con esto podemos observar que la distribución de los asesinatos en los
+estados con mas población rural se aproxima mucho a una distribución
+uniforme, mientras que en los estados con población más urbana se acerca
+más a una normal.
+
 ```{r}
 
-# Discretizar la variable UrbanPop
-USArrests$UrbanPop_cat <- ifelse(USArrests$UrbanPop > 50, "Más Población Urbana", "Más Población Rural")
+murder_summary <- USArrests |>
+  group_by(UrbanPop_discreta) |>
+  summarize(Total_asesinatos = sum(Murder))
 
-# Calcular la media de asesinatos por categoría
-murder_summary <- USArrests %>%
-  group_by(UrbanPop_cat) %>%
-  summarize(Media_Asesinatos = mean(Murder))
+ggplot(murder_summary, aes(x = UrbanPop_discreta, y = Total_asesinatos, fill = UrbanPop_discreta)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +  
+  labs(title = "Total de Asesinatos según Población Urbana/Rural",
+       x = "Categoría de Población",
+       y = "Total de Asesinatos") +
+  scale_fill_manual(values = c("Más Población Urbana" = "lightblue", "Más Población Rural" = "tomato")) +
+  theme_minimal()
 
-# Crear el gráfico de barras
-ggplot(murder_summary, aes(x = UrbanPop_cat, y = Media_Asesinatos, fill = UrbanPop_cat)) +
+```
+
+Este gráfico nos muestra que se cometen muchos más asesinatos en zonas
+con mayor población urbana que en zonas con mayor población rural. Aun
+así podríamos ver la media de asesinatos que nos podría dar otra
+perspectiva:
+
+```{r}
+murder_summary_2 <- USArrests |>
+  group_by(UrbanPop_discreta) |>
+  summarize(Media_asesinatos = mean(Murder))
+
+ggplot(murder_summary_2, aes(x = UrbanPop_discreta, y = Media_asesinatos, fill = UrbanPop_discreta)) +
   geom_bar(stat = "identity", show.legend = FALSE) +  
   labs(title = "Media de Asesinatos según Población Urbana/Rural",
        x = "Categoría de Población",
@@ -284,23 +327,46 @@ ggplot(murder_summary, aes(x = UrbanPop_cat, y = Media_Asesinatos, fill = UrbanP
   scale_fill_manual(values = c("Más Población Urbana" = "lightblue", "Más Población Rural" = "tomato")) +
   theme_minimal()
 
-```
-Aunque la distribución de los asesinatos pueda indicar lo contrario, la media de asesinatos en poblacion rural es ligeramente superior a la urbana. La anterior gráfica puede llevar a equivocación debido a que hay muchos más estados con más población urbana que rural, por lo cual más asesinatos se cometen en estados urbanos, a pesar de que de media se cometan más en los estados rurales
 
-USArrests$UrbanPop_cat <- ifelse(USArrests$UrbanPop > 50, "Más Población Urbana", "Más Población Rural")
-
-```{r}
-# Crear el boxplot para comparar la variable Murder según las dos categorías de UrbanPop
-ggplot(USArrests, aes(x = UrbanPop_cat, y = Murder, fill = UrbanPop_cat)) +
-  geom_boxplot(show.legend = FALSE) +  # Eliminar la leyenda
+ggplot(USArrests, aes(x = UrbanPop_discreta, y = Murder, fill = UrbanPop_discreta)) +
+  geom_boxplot(show.legend = FALSE) +  
   labs(title = "Distribución de Asesinatos según Población Urbana/Rural",
        x = "Categoría de Población",
        y = "Número de Asesinatos") +
   scale_fill_manual(values = c("Más Población Urbana" = "lightblue", "Más Población Rural" = "tomato")) +
   theme_minimal()
+
 ```
-Con este box plot confirmamos que la media de las zonas rurales es mayor que en las urbanas y que los datos están más dispersos en la población rural.
 
-#Pregunta 9
-Teniendo en cuenta los resultados anteriores, podemos plantear el siguiente contraste de hipótesis: Hay el mismo número de asesinatos independientemente de si más población vive en las ciudades o en los pueblos
+Aunque la distribución de los asesinatos pueda indicar lo contrario, la
+media de asesinatos en poblacion rural es ligeramente superior a la
+urbana. Las anteriores gráficas puede llevar a equivocación debido a que
+hay muchos más estados con más población urbana que rural, por lo cual
+más asesinatos se cometen en estados urbanos, también al haber más
+población hay más asesinatos, a pesar de que de media se cometan más en
+los estados rurales
 
+# Pregunta 9
+
+Teniendo en cuenta los resultados anteriores, podemos plantear un
+contraste de hipótesis en el que veamos si de media se comete un numero
+significativamente mayor de asesinatos en zonas urbanas o rurales
+
+Para resolver este contraste de hipótesis utilizamos el test t, teniendo
+en cuenta que nuestra hipótesis nula es que las medias sean iguales y
+nuestra hipótesis alternativa es que sean distintas
+
+```{r}
+urbano <- USArrests |> filter(UrbanPop_discreta == "Más Población Urbana") |> select(Murder)
+rural <- USArrests |> filter(UrbanPop_discreta == "Más Población Rural") |> select(Murder)
+
+result <- t.test(urbano$Murder, rural$Murder, var.equal = FALSE)
+print(result)
+
+```
+
+Como el valor p es mayor a 0.05 no podemos decir que haya una diferencia
+significativa entre la media de asesinatos en zonas rurales y en zonas
+urbanas. Por lo que no podemos decir que haya una relacion significativa
+entre la distribucion de la poblacion y la media de asesinatos. Y viendo
+los dos gráficos anteriores esto se puede observar claramente
