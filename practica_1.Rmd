@@ -84,7 +84,6 @@ variable UrbanPop
 
 discretizada <- ifelse(USArrests$UrbanPop > 50, "Más urbana", "Más rural")
 
-# Crear un gráfico de barras para visualizar la discretización
 ggplot(USArrests, aes(x = discretizada)) +
   geom_bar(fill = "lightblue") +
   labs(title = "Distribución de la Población",
@@ -104,7 +103,6 @@ Distribución de los asesinatos, de los asaltos y de las violaciones, que
 son nuestras variables continuas
 
 ```{r}
-library(ggplot2)
 
 ggplot(datos, aes(x = Assault)) + 
   geom_histogram(aes(y = ..density..),
@@ -175,7 +173,7 @@ mean_value <- 21.23
 sd_value <- 9.366385    
 x <- seq(0, 60, length.out = 1000)
 y <- dnorm(x, mean = mean_value, sd = sd_value)
-# Crear un dataframe para ggplot
+
 normal <- data.frame(x = x, y = y)
 
 ggplot(USArrests, aes(x = Rape)) + 
@@ -239,7 +237,6 @@ error_std <- valor_critico * (sd / sqrt(n))
 IC_inferior <- media - error_std
 IC_superior <- media + error_std
 
-# Mostrar el resultado
 print(paste("IC_95% = (",IC_inferior,", ", IC_superior,")"))
 ```
 
