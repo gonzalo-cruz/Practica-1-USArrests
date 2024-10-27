@@ -16,6 +16,8 @@ los datos de los arrestos en EEUU de la librería 'datasets'
 
 # Pregunta 1
 
+### Realizar un Análisis Exploratorio de Datos sobre los datos.
+
 EDA
 
 Cargo los datos de la librería datasets y las librerías que vamos a usar
@@ -29,6 +31,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 library(datasets)
 library(dplyr)
 library(ggplot2)
+library(knitr)
 datos=datasets::USArrests
 
 ```
@@ -45,6 +48,10 @@ dim(datos)
 str(datos)
 ```
 
+Esta base de datos tiene 50 observaciones, que son los 50 estados de
+EEUU, y 4 características medidas "Murder", "Assault", "UrbanPop" y
+"Rape".
+
 Estas variables representan:
 
 -   Murder: numeric Murder arrests (per 100,000)
@@ -57,13 +64,17 @@ Estas variables representan:
 
 Todas las variables son variables continuas, pueden tomar cualquier
 valor, no tenemos variables discretas, para ello habría que discretizar
-una variable continua. Hay 50 observaciones y 4 características medidas.
-No tenemos variables de tipo texto ni variables irrelevantes
+una variable continua. En cuanto a las categorías, todas las variables
+son numéricas o cuantitativas, ninguna es cualitativa o categórica. No
+tenemos variables de tipo texto ni variables irrelevantes
 
 # Pregunta 2
 
-Estadísticos resumen de todas las variables (cuartiles, mediana, media,
-mínimos y máximos), además de las desviaciones típicas de cada variable:
+### Calcular estadísticos resumen de todas las variables de interés.
+
+Con la función summary obtenemos datos estadísticos resumen de cada
+variabe, como los mínimos, los máximos, la media, la mediana y los
+cuartiles. Con la función sd obtenemos la desviación típica.
 
 ```{r}
 summary(datos)
@@ -77,6 +88,8 @@ sd(datos$UrbanPop)
 
 # Pregunta 3
 
+### Emplear técnicas gráficas para estudiar la distribución de (al menos) una variable discreta. Si no existe una variable discreta en el conjunto de datos, podéis crearla.
+
 Como no tenemos variables discretas, hemos optado por discretizar la
 variable UrbanPop
 
@@ -84,6 +97,7 @@ variable UrbanPop
 
 discretizada <- ifelse(USArrests$UrbanPop > 50, "Más urbana", "Más rural")
 
+# Crear un gráfico de barras para visualizar la discretización
 ggplot(USArrests, aes(x = discretizada)) +
   geom_bar(fill = "lightblue") +
   labs(title = "Distribución de la Población",
@@ -99,10 +113,13 @@ los que predomina la población rural
 
 # Pregunta 4
 
+### Emplear técnicas gráficas para estudiar la distribución de (al menos) una variable continua. Si es necesario, transformar la variable para conseguir una distribución conocida.
+
 Distribución de los asesinatos, de los asaltos y de las violaciones, que
 son nuestras variables continuas
 
 ```{r}
+library(ggplot2)
 
 ggplot(datos, aes(x = Assault)) + 
   geom_histogram(aes(y = ..density..),
@@ -132,6 +149,8 @@ podemos concluir que es más común que haya un numero menor de
 violaciones y asesinatos que una gran cantidad de ellos
 
 # Pregunta 5
+
+### Deriva teóricamente el estimador de máxima verosimilitud de uno de los parámetros de la distribución anterior. Compara la distribución muestral con la distribución teórica.
 
 Vamos a hacerlo para una distribución normal para luego compararlo con
 la distribución de las violaciones
@@ -173,7 +192,7 @@ mean_value <- 21.23
 sd_value <- 9.366385    
 x <- seq(0, 60, length.out = 1000)
 y <- dnorm(x, mean = mean_value, sd = sd_value)
-
+# Crear un dataframe para ggplot
 normal <- data.frame(x = x, y = y)
 
 ggplot(USArrests, aes(x = Rape)) + 
@@ -187,6 +206,8 @@ ggplot(USArrests, aes(x = Rape)) +
 ```
 
 # Pregunta 6
+
+### Repite el ejercicio anterior empleando el método de los momentos. Calcula el valor del estimador en la muestra de datos y su intervalo de confianza.
 
 Utilizando el método de los momentos: $$
     m_1 = \frac{1}{n} \sum_{i=1}^{n} X_i
@@ -237,12 +258,15 @@ error_std <- valor_critico * (sd / sqrt(n))
 IC_inferior <- media - error_std
 IC_superior <- media + error_std
 
+# Mostrar el resultado
 print(paste("IC_95% = (",IC_inferior,", ", IC_superior,")"))
 ```
 
 # Pregunta 7
 
-### Apartado a)
+### Para una variable continua, calcular la probabilidad que el verdadero valor de la variable sea superior a un valor fijo.
+
+### Apartado a (desde un punto de vista teórico)
 
 Vamos a calcular la probabilidad de que haya más de 10 asesinatos,
 sabiendo que la media es 7,78 y la desviación típica es 4.355 (pregunta
@@ -261,7 +285,7 @@ P(Z > 0.507) = 1 - 0.6943 = 0.3057
 $$ Por lo tanto la probabilidad de que en un estado haya mas de 10
 asesinatos por cada 100000 habitantes es de aproximadamente un 30%
 
-### Apartado b
+### Apartado b (desde un punto de vista práctico)
 
 Si ahora en vez de calcular el valor de manera teórica, lo hacemos
 mediante una simulación en r:
@@ -275,6 +299,8 @@ print(paste("Probabilidad de que haya más de 10 asesinatos = ", prob))
 ```
 
 # Pregunta 8
+
+### Dada una variable continua y una discreta, realiza un gráfico en el que se comparan las distribuciones de la variable continua en (al menos) dos grupos construidos en base a la variable discreta.
 
 ```{r}
 
@@ -350,6 +376,8 @@ los estados rurales
 
 # Pregunta 9
 
+### En vista de los resultados anteriores, plantea un contraste de hipótesis. Resuelve dicho contraste explicando qué suposiciones has tenido en cuenta
+
 Teniendo en cuenta los resultados anteriores, podemos plantear un
 contraste de hipótesis en el que veamos si de media se comete un numero
 significativamente mayor de asesinatos en zonas urbanas o rurales
@@ -372,3 +400,40 @@ significativa entre la media de asesinatos en zonas rurales y en zonas
 urbanas. Por lo que no podemos decir que haya una relacion significativa
 entre la distribucion de la poblacion y la media de asesinatos. Y viendo
 los dos gráficos anteriores esto se puede observar claramente
+
+# Pregunta 10
+
+### Dadas dos variables discretas, construye una tabla de contingencia para estudiar la asociación entre ellas. Representa gráficamente dicha asociación.
+
+```{r}
+# Tabla de contingencia
+kable(table(datos$Assault, datos$UrbanPop))
+
+
+```
+
+```{r}
+# Generar histogramas sin mostrar gráficos para obtener los intervalos de clase de Assault y UrbanPop
+histo_assault <- hist(datos$Assault, plot = FALSE)
+histo_urbanpop <- hist(datos$UrbanPop, plot = FALSE, breaks = 4)
+
+# Clasificar las variables Assault y UrbanPop en categorías basadas en los intervalos de los histogramas y añadir al dataframe
+datos <- datos |> 
+  mutate(clase_assault = cut(Assault, breaks = histo_assault$breaks)) |> 
+  mutate(clase_urbanpop = cut(UrbanPop, breaks = histo_urbanpop$breaks))
+
+# Crear una tabla de contingencia entre las categorías de Assault y UrbanPop, añadiendo totales
+tabla_contingencia <- table(datos$clase_assault, datos$clase_urbanpop) |> addmargins()
+
+# Mostrar la tabla de contingencia en formato bien formateado
+library(knitr)
+kable(tabla_contingencia)
+
+# Gráfico
+datos |> 
+  ggplot(aes(x = Assault, y = UrbanPop)) +
+  geom_point() +
+  geom_smooth() +
+  labs(title = "Gráfico de dispersión con ajuste de regresión")
+
+```
