@@ -1,6 +1,6 @@
 ﻿**Grado en Ciencia e Ingeniería de Datos Curso 2024-2025**
 
-**Inferencia Estadística Práctica 1**
+**Inferencia Estadística Práctica 1 -> Grupo 4**
 
 Práctica en grupo de dos personas. Se requiere la entrega de una memoria en formato pdf. La memoria ha de incluir el código empleado así como una explicación de la solución propuesta para cada uno de los ejercicios propuestos. Cada grupo trabajará con un conjunto de datos diferente:
 
